@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import liblo, sys, os, time, datetime, subprocess, signal, shutil
+from subprocess import call
 import git
 
-class NSMGit(liblo.Server):
+class NSMPatchbay(liblo.Server):
     def __init__(self):
         liblo.Server.__init__(self)
         self.add_method("/reply", 'ssss', self.handshake_callback)
@@ -21,13 +22,18 @@ class NSMGit(liblo.Server):
         self.app = None
 
         self.NSM_URL = os.getenv('NSM_URL')
-        os.environ['GIT_AUTHOR_NAME'] = 'nsm-git'
-        os.environ['GIT_AUTHOR_EMAIL'] = 'noreply@nsm-git'
+       
+###      os.environ['GIT_AUTHOR_NAME'] = 'nsm-git'
+###      os.environ['GIT_AUTHOR_EMAIL'] = 'noreply@nsm-git'
+
+
 
         if not self.NSM_URL:
            sys.exit()
 
         self.handshake()
+
+        print "testing 123"
 
     # ---------------------------------------------------------------------
     # callbacks
@@ -39,7 +45,21 @@ class NSMGit(liblo.Server):
         self.session_dir, self.display_name, self.client_id = args
         self.session_dir = os.path.split(self.session_dir)[0]
         print "session dir is {}".format(self.session_dir)
-        print 'attempting to commit'
+        
+        # Sets the name of the aj-snapshot file
+        self.saveFile = (os.path.join(self.session_dir,'nsm-patchbay.xml'(os.path.join(self.session_dir,'nsm-patchbay'))))
+        print "savefile is %s" % (saveFile)
+
+        
+        # Attempt to create the save file if it doesn't exist
+        if not os.path.isfile(saveFile):
+            print 'Creating blank patchbay'
+            os.system('touch %s' % (saveFile))
+
+        # Restore patchbay
+        #os.system(patchbayRestore)
+        
+        
         self.save()
         message = liblo.Message('/reply', "/nsm/client/open", 'done')
         liblo.send(self.NSM_URL, message)
@@ -47,9 +67,9 @@ class NSMGit(liblo.Server):
     def save_callback(self, path, args):
         s_c = datetime.datetime.now().second
         self.server_saved = False
-        message = liblo.Message('/reply', "/nsm/client/save", 'nsm-git is waiting to save')
+        message = liblo.Message('/reply', "/nsm/client/save", 'NOT saved - By design NSM Patchbay must be saved manually from the GUI')
         liblo.send(self.NSM_URL, message)
-        print 'save called. waiting...'
+        print 'NOT saved - NSM Patchbay must be saved manually from the GUI'
         while not self.server_saved:
             s_d = datetime.datetime.now().second
             if s_d - s_c > 3:
@@ -82,7 +102,7 @@ class NSMGit(liblo.Server):
                 print 'gui already shown'
 
         if not self.app:
-            self.app = subprocess.Popen([os.path.join(self.executable_dir, 'nsm-git-ui'), self.session_dir],
+            self.app = subprocess.Popen([os.path.join(self.executable_dir, 'nsm-patchbay.py'), self.session_dir],
                                         stdout=subprocess.PIPE,
                                         preexec_fn=os.setsid)
             print 'showing gui', self.app.pid
@@ -102,11 +122,11 @@ class NSMGit(liblo.Server):
     # internal methods
 
     def handshake(self):
-        application_name = "nsm-git"
+        application_name = "nsm-patchbay"
         capabilities = ":message:optional-gui:"
         executable_name = os.path.realpath(__file__)
         self.executable_dir = os.path.dirname(executable_name)
-        executable_name = "nsm-git" # this leads to mostly correct behaviour, I don't know how to find the actual 'correct' value though
+        executable_name = "nsm-patchbay.py" # this leads to mostly correct behaviour, I don't know how to find the actual 'correct' value though
         pid = os.getpid()
         api_version_major = 1
         api_version_minor = 2
@@ -134,33 +154,9 @@ class NSMGit(liblo.Server):
             self.repo = git.Repo.init(self.session_dir)
             print 'created git repo'
 
-    def remove_removed(self):
-        '''
-        removes a file if it is removed from session.nsm. currently only works with Hydrogen and Carla files
-        '''
-        with open(os.path.join(self.session_dir, 'session.nsm'), 'rb') as session_file:
-            active_session = session_file.read()
-        session_contents = os.listdir(self.session_dir)
-        entries_to_remove = []
-        for entry in session_contents:
-            if any(app in entry for app in ['Hydrogen','Carla', 'Non-Mixer']):
-                entry_id = entry.split('.')[1]
-                if not entry_id in active_session:
-                    print 'alert {} removed from session'.format(entry)
-                    entries_to_remove.append(entry)
-                    if os.path.isdir(os.path.join(self.session_dir, entry)):
-                        shutil.rmtree(os.path.join(self.session_dir, entry))
-        if entries_to_remove:
-            try:
-                self.repo.index.remove(entries_to_remove, working_tree=True, force=True, r=True)
-                return entries_to_remove
-            except git.exc.GitCommandError, err:
-                print str(err)
-                return False
-        else:
-            return False
 
     def save(self):
+        
         removed = untracked = updated = False
         self.init_repo()
 
@@ -202,7 +198,7 @@ class NSMGit(liblo.Server):
 
 
 try:
-    nsm_git = NSMGit()
+    nsm_git = NSMPatchbay()
 except liblo.ServerError, err:
     print str(err)
     sys.exit()
