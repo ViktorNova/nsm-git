@@ -1,25 +1,12 @@
-nsm-git
+nsm-patchbay
 =======
+Persistent patchbay for [non session manager](http://non.tuxfamily.org/nsm/)
+Based on aj-snapshot
 
-nsm-git makes git a little easier to use with [non session manager](http://non.tuxfamily.org/nsm/) sessions. creates a git repository in the current session and commits all untracked and unstaged files to it whenever save is pressed. nsm-git also reads the session.nsm file and deletes any saved applications that are not listed in the session.
-
-This program is meant to be executed within NSM.
+This doesn't work yet, and I am just starting to learn Python. I'm using https://github.com/rhetr/nsm-git as a basis 
 
 Requirements
 ------------
 * git and [GitPython](https://github.com/gitpython-developers/GitPython)
 * liblo and pyliblo
 * NSM or something that uses NSM API v1.2
-
-
-USAGE
------
-make sure nsm-git and nsm-git-ui are in the same directory and then run nsm-git within NSM. you can open the UI by pressing the GUI button in the non-session-manager user interface.
-
-
-TODO/WISHLIST 
--------------
-* differentiate between important versions and incremental updates
-* add optional comments (possibly using git notes)
-* convert diff information to musical information
-* figure out what to do with audio files and other non-text-based data (git-annex?)
