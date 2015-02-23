@@ -1,9 +1,12 @@
-nsm-patchbay
+stagepatch
 =======
 Persistent patchbay for [non session manager](http://non.tuxfamily.org/nsm/)
 Based on aj-snapshot
 
-This doesn't work yet, and I am just starting to learn Python. I'm using https://github.com/rhetr/nsm-git as a basis 
+### Note: This doesn't quite work yet, check back soon
+
+The NSM bits of this are based on https://github.com/rhetr/nsm-git
+
 
 Requirements
 ------------
