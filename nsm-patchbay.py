@@ -48,32 +48,21 @@ class NSMPatchbay(liblo.Server):
         self.session_dir = os.path.split(self.session_dir)[0]
         print "session dir is {}".format(self.session_dir)
 
-        print "doopie doo"
         # Sets the name of the aj-snapshot file
-
         saveFile = os.path.join(self.session_dir, 'stagepatch.xml')
         print "savefile is %s" % (saveFile)
-        #saveFile = .join(saveFileDerp)
-        subprocess.Popen("ls %s" % (saveFile),
-                          stdout=subprocess.PIPE,
-                          preexec_fn=os.setsid)
-#        subprocess.Popen([os.path.join(self.session_dir, 'stagepatch.xml')],
-#                          stdout=subprocess.PIPE,
-#                          preexec_fn=os.setsid)
 
-
-        print "doopie doo 2"
-        #print "saveFileDerp is %s" % (saveFileDerp)
-        print "doopie doo 3"
-        
         # Attempt to create the save file if it doesn't exist
         if not os.path.isfile(saveFile):
-            print 'Creating blank patchbay'
+            print "First run, creating new patchbay from current MIDI and JACK connections to %s" % (saveFile)
+            subprocess.call(["aj-snapshot", saveFile],
+                             stdout=subprocess.PIPE,
+                             preexec_fn=os.setsid)
 
-        #os.system('touch %s' % (saveFile))
-        # Restore patchbay
-        #os.system(patchbayRestore)
-        
+        print "Removing existing connections"
+        print "Restoring connections from" + saveFile
+        pid = subprocess.Popen(["aj-snapshot", "-dx", saveFile]).pid
+        print "Started patchbay daemon with pid " + repr(pid)
         
         self.save()
         message = liblo.Message('/reply', "/nsm/client/open", 'done')
@@ -171,43 +160,43 @@ class NSMPatchbay(liblo.Server):
 
 
     def save(self):
-        
-        removed = untracked = updated = False
-        self.init_repo()
+        # Viktor commented this out
+    
+        #removed = untracked = updated = False
+        #self.init_repo()
 
-        if not os.path.isfile(os.path.join(self.session_dir,'.gitignore')):
-            with open(os.path.join(self.session_dir,'.gitignore'), 'wb') as gitignore:
-                gitignore.write('*.swp\n*.lock\n*autosave*\n.*')
+        #if not os.path.isfile(os.path.join(self.session_dir,'.gitignore')):
+        #    with open(os.path.join(self.session_dir,'.gitignore'), 'wb') as gitignore:
+        #        gitignore.write('*.swp\n*.lock\n*autosave*\n.*')
+        #removed = self.remove_removed()
 
-        removed = self.remove_removed()
+        #if self.repo.is_dirty(untracked_files=True):
+        #    print 'adding untracked files'
+        #    untracked = self.repo.untracked_files
+        #    self.repo.index.add(self.repo.untracked_files)
 
-        if self.repo.is_dirty(untracked_files=True):
-            print 'adding untracked files'
-            untracked = self.repo.untracked_files
-            self.repo.index.add(self.repo.untracked_files)
+        #if self.repo.git.diff(None):
+        #    print 'adding updated files'
+        #    updated = [diff.a_blob.path for diff in self.repo.index.diff(None)]
+        #    self.repo.index.add(updated)
 
-        if self.repo.git.diff(None):
-            print 'adding updated files'
-            updated = [diff.a_blob.path for diff in self.repo.index.diff(None)]
-            self.repo.index.add(updated)
+        #if any((removed, untracked, updated)):
+        #    message = 'nsm-git'
+        #    if removed:
+        #        message += "\n\tremoved {}".format('\n\t        '.join(removed))
+        #    if untracked:
+        #        message += "\n\tadded {}".format('\n\t      '.join(untracked))
+        #    if updated:
+        #        message += "\n\tupdated {}".format('\n\t        '.join(updated))
 
-        if any((removed, untracked, updated)):
-            message = 'nsm-git'
-            if removed:
-                message += "\n\tremoved {}".format('\n\t        '.join(removed))
-            if untracked:
-                message += "\n\tadded {}".format('\n\t      '.join(untracked))
-            if updated:
-                message += "\n\tupdated {}".format('\n\t        '.join(updated))
-
-            try:
-                self.repo.index.commit(message)
-                print 'committed'
-                return True
-            except git.exc.GitCommandError, err:
-                print str(err)
-                return False
-        else:
+        #    try:
+        #        self.repo.index.commit(message)
+        #        print 'committed'
+        #        return True
+        #    except git.exc.GitCommandError, err:
+        #        print str(err)
+        #        return False
+        #else:
             print 'nothing to be done'
             return False
 
