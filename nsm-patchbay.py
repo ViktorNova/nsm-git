@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import liblo, sys, os, time, datetime, subprocess, signal, shutil
-from subprocess import call
+#from subprocess import call
 import git
 
 class NSMPatchbay(liblo.Server):
@@ -20,13 +20,15 @@ class NSMPatchbay(liblo.Server):
         self.server_saved = False
         self.exit = False
         self.app = None
+        
+        self.saveFile = None
 
         self.NSM_URL = os.getenv('NSM_URL')
+        
+        self.NSM_URL = "osc.udp://datakTARR:15838/"
        
 ###      os.environ['GIT_AUTHOR_NAME'] = 'nsm-git'
 ###      os.environ['GIT_AUTHOR_EMAIL'] = 'noreply@nsm-git'
-
-
 
         if not self.NSM_URL:
            sys.exit()
@@ -45,17 +47,30 @@ class NSMPatchbay(liblo.Server):
         self.session_dir, self.display_name, self.client_id = args
         self.session_dir = os.path.split(self.session_dir)[0]
         print "session dir is {}".format(self.session_dir)
-        
-        # Sets the name of the aj-snapshot file
-        self.saveFile = (os.path.join(self.session_dir,'nsm-patchbay.xml'(os.path.join(self.session_dir,'nsm-patchbay'))))
-        print "savefile is %s" % (saveFile)
 
+        print "doopie doo"
+        # Sets the name of the aj-snapshot file
+
+        saveFile = os.path.join(self.session_dir, 'stagepatch.xml')
+        print "savefile is %s" % (saveFile)
+        #saveFile = .join(saveFileDerp)
+        subprocess.Popen("ls %s" % (saveFile),
+                          stdout=subprocess.PIPE,
+                          preexec_fn=os.setsid)
+#        subprocess.Popen([os.path.join(self.session_dir, 'stagepatch.xml')],
+#                          stdout=subprocess.PIPE,
+#                          preexec_fn=os.setsid)
+
+
+        print "doopie doo 2"
+        #print "saveFileDerp is %s" % (saveFileDerp)
+        print "doopie doo 3"
         
         # Attempt to create the save file if it doesn't exist
         if not os.path.isfile(saveFile):
             print 'Creating blank patchbay'
-            os.system('touch %s' % (saveFile))
 
+        #os.system('touch %s' % (saveFile))
         # Restore patchbay
         #os.system(patchbayRestore)
         
@@ -102,9 +117,9 @@ class NSMPatchbay(liblo.Server):
                 print 'gui already shown'
 
         if not self.app:
-            self.app = subprocess.Popen([os.path.join(self.executable_dir, 'nsm-patchbay.py'), self.session_dir],
-                                        stdout=subprocess.PIPE,
-                                        preexec_fn=os.setsid)
+            self.app = subprocess.Popen([os.path.join(self.executable_dir, 'nsm-patchbay-ui.py'), self.session_dir],
+                                         stdout=subprocess.PIPE,
+                                         preexec_fn=os.setsid)
             print 'showing gui', self.app.pid
 
     def hide_gui_callback(self, path, args):
@@ -200,6 +215,9 @@ class NSMPatchbay(liblo.Server):
 try:
     nsm_git = NSMPatchbay()
 except liblo.ServerError, err:
+    ## Debug Quazarrr
+    print "Debug Quazarrr"
+    
     print str(err)
     sys.exit()
 
