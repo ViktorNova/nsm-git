@@ -15,23 +15,23 @@ html_escape_table = {
         " ": "&nbsp;"
         }
 
-class Commit(QtGui.QListWidgetItem):
-    def __init__(self, commit):
-        QtGui.QListWidgetItem.__init__(self)
-
-        self.commit = commit
-        date = datetime.datetime.strptime(time.ctime(self.commit.committed_date), '%a %b %d %H:%M:%S %Y')
-        date = date.strftime('%a %b %d %I:%M %p %Y')
-        self.setText('{}...\t{}'.format(str(self.commit)[:7], date))
-
-
-class CommitList(QtGui.QListWidget):
-    def __init__(self, repo):
-        QtGui.QListWidget.__init__(self)
-        self.repo = repo
-        commits = list(self.repo.iter_commits())
-        for c in commits:
-            self.addItem(Commit(c))
+#class Commit(QtGui.QListWidgetItem):
+#    def __init__(self, commit):
+#        QtGui.QListWidgetItem.__init__(self)
+#
+#        self.commit = commit
+#        date = datetime.datetime.strptime(time.ctime(self.commit.committed_date), '%a %b %d %H:%M:%S %Y')
+#        date = date.strftime('%a %b %d %I:%M %p %Y')
+#        self.setText('{}...\t{}'.format(str(self.commit)[:7], date))
+#
+#
+#class CommitList(QtGui.QListWidget):
+#    def __init__(self, repo):
+#        QtGui.QListWidget.__init__(self)
+#        self.repo = repo
+#        commits = list(self.repo.iter_commits())
+#        for c in commits:
+#            self.addItem(Commit(c))
 
 class MainWindow(QtGui.QWidget):
     def __init__(self, repo):
