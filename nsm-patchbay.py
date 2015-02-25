@@ -20,18 +20,12 @@ class NSMPatchbay(liblo.Server):
         self.server_saved = False
         self.exit = False
         self.app = None
-        
         self.saveFile = None
-
         self.NSM_URL = os.getenv('NSM_URL')
-        
         self.NSM_URL = "osc.udp://datakTARR:15838/"
-       
-###      os.environ['GIT_AUTHOR_NAME'] = 'nsm-git'
-###      os.environ['GIT_AUTHOR_EMAIL'] = 'noreply@nsm-git'
-
         if not self.NSM_URL:
-           sys.exit()
+            print "NSM_URL is not set, not running inside Non Session Manager, exiting"
+            sys.exit()
 
         self.handshake()
 
@@ -106,7 +100,7 @@ class NSMPatchbay(liblo.Server):
                 print 'gui already shown'
 
         if not self.app:
-            self.app = subprocess.Popen([os.path.join(self.executable_dir, 'nsm-patchbay-ui.py'), self.session_dir],
+            self.app = subprocess.Popen([os.path.join(self.executable_dir, 'stagepatch-gui.py'), self.session_dir],
                                          stdout=subprocess.PIPE,
                                          preexec_fn=os.setsid)
             print 'showing gui', self.app.pid
@@ -143,63 +137,17 @@ class NSMPatchbay(liblo.Server):
             if self.exit:
                 sys.exit()
 
-
     # ---------------------------------------------------------------------
     # save methods
         
     def init_repo(self):
-        '''
-        opens the existing git repository or creates a new one
-        '''
-        try:
-            self.repo = git.Repo(self.session_dir)
-            print 'opened git repo'
-        except git.exc.InvalidGitRepositoryError:
-            self.repo = git.Repo.init(self.session_dir)
-            print 'created git repo'
-
+        print "delete me def init_repo(self)"
 
     def save(self):
-        # Viktor commented this out
+        print "delete me def save(self)"
+        
     
-        #removed = untracked = updated = False
-        #self.init_repo()
-
-        #if not os.path.isfile(os.path.join(self.session_dir,'.gitignore')):
-        #    with open(os.path.join(self.session_dir,'.gitignore'), 'wb') as gitignore:
-        #        gitignore.write('*.swp\n*.lock\n*autosave*\n.*')
-        #removed = self.remove_removed()
-
-        #if self.repo.is_dirty(untracked_files=True):
-        #    print 'adding untracked files'
-        #    untracked = self.repo.untracked_files
-        #    self.repo.index.add(self.repo.untracked_files)
-
-        #if self.repo.git.diff(None):
-        #    print 'adding updated files'
-        #    updated = [diff.a_blob.path for diff in self.repo.index.diff(None)]
-        #    self.repo.index.add(updated)
-
-        #if any((removed, untracked, updated)):
-        #    message = 'nsm-git'
-        #    if removed:
-        #        message += "\n\tremoved {}".format('\n\t        '.join(removed))
-        #    if untracked:
-        #        message += "\n\tadded {}".format('\n\t      '.join(untracked))
-        #    if updated:
-        #        message += "\n\tupdated {}".format('\n\t        '.join(updated))
-
-        #    try:
-        #        self.repo.index.commit(message)
-        #        print 'committed'
-        #        return True
-        #    except git.exc.GitCommandError, err:
-        #        print str(err)
-        #        return False
-        #else:
-            print 'nothing to be done'
-            return False
-
+    
 
 try:
     nsm_git = NSMPatchbay()
