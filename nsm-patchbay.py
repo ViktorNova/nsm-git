@@ -111,12 +111,18 @@ class NSMPatchbay(liblo.Server):
 
         if not self.app:
             self.app = subprocess.Popen([os.path.join(self.executable_dir, 'stagepatch-gui.py'),
-                                         self.session_dir,
-                                         " -saveFile ", self.saveFile, 
-                                         " -pid ", repr(self.pid)],
+                                         self.saveFile, 
+                                         repr(self.pid)],
                                          stdout=subprocess.PIPE,
                                          preexec_fn=os.setsid)
             print 'Showing gui', self.app.pid
+            
+            # Pipe all output from the GUI subprocess and show it on the console
+            gui_output = iter(self.app.stdout.readline, b"")
+            for line in gui_output:
+                print(line) # yield line
+        
+
 
     def hide_gui_callback(self, path, args):
         print 'hiding gui'
