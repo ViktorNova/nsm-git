@@ -11,12 +11,21 @@ class MainWindow(QtGui.QWidget):
     def __init__(self, repo):
         QtGui.QWidget.__init__(self)
         
+        # Parse the arguments sent by the main process 
+        # so that we know what we're working with
         parser = argparse.ArgumentParser()
-        parser.add_argument("saveFile") # Second argument (AJ-Snapshot saveFile)
-        parser.add_argument("pid")      # Third argument  (AJ-Snapshot PID)
+        parser.add_argument("saveFile") # First argument (AJ-Snapshot saveFile)
+        parser.add_argument("pid")      # Second argument  (AJ-Snapshot PID)
         args = parser.parse_args()
-        print "Patchbay save file is %s" % args.saveFile
-        print "aj-snapshot pid is %s" % args.pid
+
+        # Convert the parsed arguments into variables
+        saveFile = args.saveFile
+        pid = int(args.pid)       
+        # Print the stuff
+        
+        print "Patchbay save file is %s" % saveFile
+        print "aj-snapshot pid is " 
+        print pid
         
 
 
