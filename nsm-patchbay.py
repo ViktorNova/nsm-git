@@ -1,5 +1,7 @@
 #!/usr/bin/env python2
-
+#Patchbay daemon for NSM
+#NSM code based on rhetr's nsm-git
+#Easier stuff by Viktor Nova
 import liblo, sys, os, time, datetime, subprocess, signal, shutil
 #from subprocess import call
 import git
@@ -15,22 +17,47 @@ class NSMPatchbay(liblo.Server):
         self.add_method("/reply", 'ss', self.server_save_callback)
         self.add_method("/error", 'sis', self.error_callback)
         self.add_method(None, None, self.fallback)
-
+        
         self.session_dir = None
         self.server_saved = False
         self.exit = False
         self.app = None
+        
         self.saveFile = None
+        self.pid = None
         self.NSM_URL = os.getenv('NSM_URL')
-        self.NSM_URL = "osc.udp://datakTARR:15838/"
+        self.NSM_URL = "osc.udp://datakTARR:15838/" # for testing purposes
         if not self.NSM_URL:
             print "NSM_URL is not set, not running inside Non Session Manager, exiting"
             sys.exit()
 
         self.handshake()
+        
+        self.aj_snapshot()
 
-        print "testing 123"
+# ------------------------ AJ-Snapshot ----------------------------
+    def aj_snapshot(self):
+        # Sets the name of the aj-snapshot file
+        self.saveFile = os.path.join(self.session_dir, 'stagepatch.xml')
+        print "saveFile is %s" % (self.saveFile)
 
+        # Attempt to create the save file if it doesn't exist
+        if not os.path.isfile(self.saveFile):
+            print "First run, creating new patchbay file from current MIDI and JACK connections to %s" % (self.saveFile)
+            subprocess.call(["aj-snapshot", self.saveFile],
+                             stdout=subprocess.PIPE,
+                             preexec_fn=os.setsid)
+
+        print "Removing existing connections"
+        print "Restoring connections from" + self.saveFile
+        # To do: f
+        self.daemon = subprocess.Popen(["aj-snapshot", "-dx", self.saveFile],
+                                       stdout=subprocess.PIPE,
+                                       preexec_fn=os.setsid)
+        self.pid = self.daemon.pid                               
+        print "Started patchbay daemon with pid " + repr(self.pid)
+        
+        
     # ---------------------------------------------------------------------
     # callbacks
 
@@ -39,25 +66,7 @@ class NSMPatchbay(liblo.Server):
 
     def open_callback(self, path, args):
         self.session_dir, self.display_name, self.client_id = args
-        self.session_dir = os.path.split(self.session_dir)[0]
-        print "session dir is {}".format(self.session_dir)
-
-        # Sets the name of the aj-snapshot file
-        saveFile = os.path.join(self.session_dir, 'stagepatch.xml')
-        print "savefile is %s" % (saveFile)
-
-        # Attempt to create the save file if it doesn't exist
-        if not os.path.isfile(saveFile):
-            print "First run, creating new patchbay from current MIDI and JACK connections to %s" % (saveFile)
-            subprocess.call(["aj-snapshot", saveFile],
-                             stdout=subprocess.PIPE,
-                             preexec_fn=os.setsid)
-
-        print "Removing existing connections"
-        print "Restoring connections from" + saveFile
-        pid = subprocess.Popen(["aj-snapshot", "-dx", saveFile]).pid
-        print "Started patchbay daemon with pid " + repr(pid)
-        
+        self.session_dir = os.path.split(self.session_dir)[0]        
         self.save()
         message = liblo.Message('/reply', "/nsm/client/open", 'done')
         liblo.send(self.NSM_URL, message)
@@ -92,6 +101,7 @@ class NSMPatchbay(liblo.Server):
             print 'no session open'
             self.exit = True
 
+# ----------------------- SHOW GUI ----------------------------------
     def show_gui_callback(self, path, args):
         if self.app:
             if self.app.poll() == 0:
@@ -100,10 +110,13 @@ class NSMPatchbay(liblo.Server):
                 print 'gui already shown'
 
         if not self.app:
-            self.app = subprocess.Popen([os.path.join(self.executable_dir, 'stagepatch-gui.py'), self.session_dir],
+            self.app = subprocess.Popen([os.path.join(self.executable_dir, 'stagepatch-gui.py'),
+                                         self.session_dir,
+                                         " -saveFile ", self.saveFile, 
+                                         " -pid ", repr(self.pid)],
                                          stdout=subprocess.PIPE,
                                          preexec_fn=os.setsid)
-            print 'showing gui', self.app.pid
+            print 'Showing gui', self.app.pid
 
     def hide_gui_callback(self, path, args):
         print 'hiding gui'
@@ -141,14 +154,12 @@ class NSMPatchbay(liblo.Server):
     # save methods
         
     def init_repo(self):
-        print "delete me def init_repo(self)"
+        print "delete me: def init_repo(self)"
 
     def save(self):
-        print "delete me def save(self)"
+        print "Fix me: def save is being called."
+        print "This happens when NSM asks the client to save, which is good, but it also happens when NSM opens for the first time, which makes sense for the code I forked this from, but not for typical stuff"
         
-    
-    
-
 try:
     nsm_git = NSMPatchbay()
 except liblo.ServerError, err:
