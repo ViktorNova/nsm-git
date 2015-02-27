@@ -4,6 +4,7 @@
 import os
 from PyQt4 import QtCore,QtGui
 import sys
+import subprocess
 import stagepatch_ui
 import argparse
 
@@ -38,20 +39,22 @@ class hwl(QtGui.QDialog,stagepatch_ui.Ui_Stagepatch):
         def main(self):
             self.show()
         def connectActions(self):
-            """
-            Connect the user interface controls to the logic
-            """
-            # self.cmdWrite.clicked.connect(self.myprint)      
-            #self.overwritePatchbay.connect(self.myprint)        
+            # Call a different function for each button that 
+            # gets clicked
+            self.overwritePatchbay.clicked.connect(self.overwrite)        
             
-#        def myprint(self):
-            """
-            Even handler for the pushButton click
-            """
-            #self.txtLine.setText('Python -- ')        
-            #self.txtEdit.setText('This')
-            #self.lblShow.setText('is a test')
+        def overwrite(self): # Save Patchbay
+            #self.lblShow.setText('This is a test')
             print "Overwritepatchbay is clicked"
+            print "Saving current MIDI and JACK connections over existing patchbay"
+            subprocess.call(["aj-snapshot", "-f", self.saveFile],
+                             stdout=subprocess.PIPE,
+                             preexec_fn=os.setsid)
+            # Replace this with a proper python sendsignal thing                
+            subprocess.call(["kill", "-HUP", self.pid],
+                             stdout=subprocess.PIPE,
+                             preexec_fn=os.setsid)            
+            
         
 if __name__=='__main__':
     app = QtGui.QApplication(sys.argv)
