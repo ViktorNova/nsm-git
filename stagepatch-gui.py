@@ -2,15 +2,14 @@
 # filename: nsm-git-ui
 
 import os
+from PyQt4 import QtCore,QtGui
+import sys
+import stagepatch_ui
 import argparse
-from PyQt4 import QtGui, QtCore
 
+# -----------------------------------------------------------------------
 
-
-class MainWindow(QtGui.QWidget):
-    def __init__(self, repo):
-        QtGui.QWidget.__init__(self)
-        
+class hwl(QtGui.QDialog,stagepatch_ui.Ui_Stagepatch):
         # Parse the arguments sent by the main process 
         # so that we know what we're working with
         parser = argparse.ArgumentParser()
@@ -26,14 +25,39 @@ class MainWindow(QtGui.QWidget):
         print "Patchbay save file is %s" % saveFile
         print "aj-snapshot pid is " 
         print pid
+        """
+        hwl is inherited from both QtGui.QDialog and hw.Ui_Dialog
+        """
+        def __init__(self,parent=None):
+            """
+                Initialization of the class. Call the __init__ for the super classes
+            """
+            super(hwl,self).__init__(parent)
+            self.setupUi(self)
+            self.connectActions()
+        def main(self):
+            self.show()
+        def connectActions(self):
+            """
+            Connect the user interface controls to the logic
+            """
+            # self.cmdWrite.clicked.connect(self.myprint)      
+            #self.overwritePatchbay.connect(self.myprint)        
+            
+#        def myprint(self):
+            """
+            Even handler for the pushButton click
+            """
+            #self.txtLine.setText('Python -- ')        
+            #self.txtEdit.setText('This')
+            #self.lblShow.setText('is a test')
+            print "Overwritepatchbay is clicked"
         
-
-
-if __name__ == '__main__':
-    import sys
+if __name__=='__main__':
     app = QtGui.QApplication(sys.argv)
-    if len(sys.argv) > 1:
-        print sys.argv[1]
-        main = MainWindow(sys.argv[1])
-        main.show()
-        sys.exit(app.exec_())
+    hwl1 = hwl()
+    hwl1.main()
+    sys.exit(app.exec_())
+
+# -----------------------------------------------------------------------
+
