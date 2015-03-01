@@ -25,7 +25,7 @@ class NSMPatchbay(liblo.Server):
         self.saveFile = None
         self.pid = None
         self.NSM_URL = os.getenv('NSM_URL')
-        #self.NSM_URL = "osc.udp://datakTARR:13161/" # for testing purposes
+        self.NSM_URL = "osc.udp://datakTARR:10001/" # for testing purposes
         if not self.NSM_URL:
             print "NSM_URL is not set, not running inside Non Session Manager, exiting"
             sys.exit()
@@ -71,22 +71,12 @@ class NSMPatchbay(liblo.Server):
         liblo.send(self.NSM_URL, message)
 
     def save_callback(self, path, args):
-        s_c = datetime.datetime.now().second
-        self.server_saved = False
+        self.server_saved = False #Viktor changed this from false.. might need to change it back?
         message = liblo.Message('/reply', "/nsm/client/save", 'NOT saved - By design NSM Patchbay must be saved manually from the GUI')
         liblo.send(self.NSM_URL, message)
         print 'NOT saved - NSM Patchbay must be saved manually from the GUI'
-        while not self.server_saved:
-            s_d = datetime.datetime.now().second
-            if s_d - s_c > 3:
-                message = liblo.Message("/nsm/client/message", 1, "nsm-git has waited long enough")
-                liblo.send(self.NSM_URL, message)
-                print 'nsm-git has waited long enough. saving...'
-                break
-            self.recv(50)
-
         saved = self.save()
-        msg = "nsm-git has committed" if saved else "nothing for nsm-git to commit"
+        msg = "Reporting patchbay as saved, regardless"
         message = liblo.Message("/nsm/client/message", 1, msg)
         liblo.send(self.NSM_URL, message)
 
@@ -164,6 +154,7 @@ class NSMPatchbay(liblo.Server):
     def save(self):
         print "Fix me: def save is being called."
         print "This happens when NSM asks the client to save, which is good, but it also happens when NSM opens for the first time, which makes sense for the code I forked this from, but not for typical stuff"
+        return True
         
 try:
     nsm_git = NSMPatchbay()
