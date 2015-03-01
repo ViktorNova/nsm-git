@@ -2,9 +2,8 @@
 #Patchbay daemon for NSM
 #NSM code based on rhetr's nsm-git
 #Easier stuff by Viktor Nova
-import liblo, sys, os, time, datetime, subprocess, signal, shutil
+import liblo, sys, os, datetime, subprocess, signal
 #from subprocess import call
-import git
 
 class NSMPatchbay(liblo.Server):
     def __init__(self):
@@ -26,7 +25,7 @@ class NSMPatchbay(liblo.Server):
         self.saveFile = None
         self.pid = None
         self.NSM_URL = os.getenv('NSM_URL')
-        self.NSM_URL = "osc.udp://datakTARR:12460/" # for testing purposes
+        #self.NSM_URL = "osc.udp://datakTARR:13161/" # for testing purposes
         if not self.NSM_URL:
             print "NSM_URL is not set, not running inside Non Session Manager, exiting"
             sys.exit()

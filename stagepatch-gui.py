@@ -6,7 +6,8 @@ from PyQt4 import QtCore,QtGui
 import sys
 import subprocess
 import stagepatch_ui
-import argparse
+import argparse                 #for incoming arguments
+import signal
 
 # -----------------------------------------------------------------------
 
@@ -50,10 +51,13 @@ class hwl(QtGui.QDialog,stagepatch_ui.Ui_Stagepatch):
             subprocess.call(["aj-snapshot", "-f", self.saveFile],
                              stdout=subprocess.PIPE,
                              preexec_fn=os.setsid)
-            # Replace this with a proper python sendsignal thing                
-            subprocess.call(["kill", "-HUP", self.pid],
-                             stdout=subprocess.PIPE,
-                             preexec_fn=os.setsid)            
+            print "Attempting to restart the thingy"
+            os.kill(self.pid, signal.SIGHUP)
+            print "OK, see if it got restarted."
+                            # Replace this with a proper python sendsignal thing                
+                            #subprocess.call(["kill", "-HUP", self.pid],
+                            #=               stdout=subprocess.PIPE,
+                            #                preexec_fn=os.setsid)            
             
         
 if __name__=='__main__':
