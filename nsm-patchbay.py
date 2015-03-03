@@ -29,7 +29,7 @@ class NSMPatchbay(liblo.Server):
         self.gui_pid = None
         
         self.NSM_URL = os.getenv('NSM_URL')
-        self.NSM_URL = "osc.udp://datakTARR:10001/" # for testing purposes
+        # self.NSM_URL = "osc.udp://datakTARR:10001/" # for testing purposes
         if not self.NSM_URL:
             print "NSM_URL is not set, not running inside Non Session Manager, exiting"
             sys.exit()
