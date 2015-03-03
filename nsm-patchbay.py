@@ -2,7 +2,9 @@
 #Patchbay daemon for NSM
 #NSM code based on rhetr's nsm-git
 #Easier stuff by Viktor Nova
-import liblo, sys, os, datetime, subprocess, signal
+import liblo, sys, os, subprocess
+import atexit
+from signal import signal, SIGTERM
 #from subprocess import call
 
 class NSMPatchbay(liblo.Server):
@@ -24,6 +26,8 @@ class NSMPatchbay(liblo.Server):
         
         self.saveFile = None
         self.pid = None
+        self.gui_pid = None
+        
         self.NSM_URL = os.getenv('NSM_URL')
         self.NSM_URL = "osc.udp://datakTARR:10001/" # for testing purposes
         if not self.NSM_URL:
@@ -33,6 +37,7 @@ class NSMPatchbay(liblo.Server):
         self.handshake()
         
         self.aj_snapshot()
+
 
 # ------------------------ AJ-Snapshot ----------------------------
     def aj_snapshot(self):
@@ -56,6 +61,25 @@ class NSMPatchbay(liblo.Server):
         self.pid = self.daemon.pid                               
         print "Started patchbay daemon with pid " + repr(self.pid)
         
+        def cleanup(self, reason):
+            print "Cleaning up.."
+            print "Killing aj-snapshot system-wide"
+            print "FIXME! Killing all instances of aj-snapshot is a dity hack and NOT the solution!"
+            """
+            if self.pid:
+                print "aj-snapshot is running"
+            else:
+                print "aj-snapshot AINT running"
+            if self.app.pid:
+                print "GUI is running"
+            else:
+                print "GUI AINT running"
+            """
+            os.system('killall -KILL aj-snapshot')
+            
+            sys.exit()
+        
+        signal(SIGTERM, cleanup)
         
     # ---------------------------------------------------------------------
     # callbacks
@@ -104,7 +128,8 @@ class NSMPatchbay(liblo.Server):
                                          repr(self.pid)],
                                          stdout=subprocess.PIPE,
                                          preexec_fn=os.setsid)
-            print 'Showing gui', self.app.pid
+            self.gui_pid = self.app.pid
+            print 'Showing gui', self.gui_pid
             
             # Pipe all output from the GUI subprocess and show it on the console
             gui_output = iter(self.app.stdout.readline, b"")
@@ -149,21 +174,29 @@ class NSMPatchbay(liblo.Server):
     # save methods
         
     def init_repo(self):
-        print "delete me: def init_repo(self)"
+        print "FIXME: def init_repo(self) is being called"
+        print "Move the initial stuff to here instead of the handshake"
+        
 
     def save(self):
         print "Fix me: def save is being called."
         print "This happens when NSM asks the client to save, which is good, but it also happens when NSM opens for the first time, which makes sense for the code I forked this from, but not for typical stuff"
         return True
         
+
+# --------------------- CLEANUP ON SHUTDOWN ------------------------
+
 try:
+
+
     nsm_git = NSMPatchbay()
 except liblo.ServerError, err:
     ## Debug Quazarrr
     print "Debug Quazarrr"
     
     print str(err)
-    sys.exit()
+    # cleanup() Figure out how to call cleanup from here too, in case of an error
+
 
 while True:
-    nsm_git.recv(100)
+    nsm_git.recv(100) 
