@@ -9,9 +9,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>442</width>
+    <height>377</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>30</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -30,78 +36,118 @@
      </property>
     </spacer>
    </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item alignment="Qt::AlignTop">
-      <widget class="QLabel" name="label">
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="text">
-        <string>Overwrite saved patchbay with the current state of all MIDI and JACK connections</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="overwritePatchbay">
-       <property name="text">
-        <string>Overwrite Patchbay</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="reloadPatchbay">
-       <property name="toolTip">
-        <string>Disconnect everything and reload from previously saved patchbay</string>
-       </property>
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="disconnectAll">
-       <property name="text">
-        <string>Disconnect All</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item alignment="Qt::AlignHCenter">
+    <widget class="QLabel" name="label_3">
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>STAGEPATCH</string>
+     </property>
+    </widget>
    </item>
    <item>
-    <widget class="QTextBrowser" name="textBrowser"/>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
+    <spacer name="verticalSpacer_4">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>51</height>
+       <height>40</height>
       </size>
      </property>
     </spacer>
+   </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="text">
+      <string>Overwrite saved patchbay with the current state of all MIDI and JACK connections</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="overwritePatchbay">
+     <property name="text">
+      <string>Overwrite Patchbay</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer_5">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Reload the patchbay from save file</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="reloadPatchbay">
+     <property name="toolTip">
+      <string>Disconnect everything and reload from previously saved patchbay</string>
+     </property>
+     <property name="text">
+      <string>Reload</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="">
+     <widget class="QWidget" name="Page1" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Remove all MIDI and JACK connections</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="disconnectAll">
+         <property name="text">
+          <string>Disconnect All</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
