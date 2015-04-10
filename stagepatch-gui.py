@@ -1,11 +1,11 @@
 #!/usr/bin/env python2
-# filename: nsm-git-ui
+# filename: stagepatch-gui.py
 
 import os
 from PyQt4 import QtCore,QtGui
 import sys
 import subprocess
-import stagepatch_ui
+import stagepatch_ui            #the UI from qt designer
 import argparse                 #for incoming arguments
 import signal
 
@@ -57,8 +57,8 @@ class hwl(QtGui.QDialog,stagepatch_ui.Ui_Stagepatch):
                             # Replace this with a proper python sendsignal thing                
                             #subprocess.call(["kill", "-HUP", self.pid],
                             #=               stdout=subprocess.PIPE,
-                            #                preexec_fn=os.setsid)            
-            
+                            #                preexec_fn=os.setsid)
+
         
 if __name__=='__main__':
     app = QtGui.QApplication(sys.argv)
