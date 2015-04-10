@@ -40,10 +40,10 @@ class hwl(QtGui.QDialog,stagepatch_ui.Ui_Stagepatch):
         def main(self):
             self.show()
         def connectActions(self):
-            # Call a different function for each button that 
+            # Call a different function for each button that
             # gets clicked
-            self.overwritePatchbay.clicked.connect(self.overwrite)        
-            
+            self.overwritePatchbay.clicked.connect(self.overwrite)
+
         def overwrite(self): # Save Patchbay
             #self.lblShow.setText('This is a test')
             print "Overwritepatchbay is clicked"
@@ -54,7 +54,7 @@ class hwl(QtGui.QDialog,stagepatch_ui.Ui_Stagepatch):
             print "Attempting to restart the thingy"
             os.kill(self.pid, signal.SIGHUP)
             print "OK, see if it got restarted."
-                            # Replace this with a proper python sendsignal thing                
+                            # Replace this with a proper python sendsignal thing
                             #subprocess.call(["kill", "-HUP", self.pid],
                             #=               stdout=subprocess.PIPE,
                             #                preexec_fn=os.setsid)
