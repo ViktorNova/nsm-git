@@ -9,7 +9,7 @@ import stagepatch_ui            #the UI from qt designer
 import argparse                 #for incoming arguments
 import signal
 
-# -----------------------------------------------------------------------
+# --------------5---------------------------------------------------------
 
 class hwl(QtGui.QDialog,stagepatch_ui.Ui_Stagepatch):
         # Parse the arguments sent by the main process 
@@ -24,9 +24,9 @@ class hwl(QtGui.QDialog,stagepatch_ui.Ui_Stagepatch):
         pid = int(args.pid)       
         # Print the stuff
         
-        print "Patchbay save file is %s" % saveFile
-        print "aj-snapshot pid is " 
-        print pid
+        print("Patchbay save file is %s" % saveFile)
+        print("aj-snapshot pid is ") 
+        print(pid)
         """
         hwl is inherited from both QtGui.QDialog and hw.Ui_Dialog
         """
@@ -46,14 +46,14 @@ class hwl(QtGui.QDialog,stagepatch_ui.Ui_Stagepatch):
 
         def overwrite(self): # Save Patchbay
             #self.lblShow.setText('This is a test')
-            print "Overwritepatchbay is clicked"
-            print "Saving current MIDI and JACK connections over existing patchbay"
+            print("Overwritepatchbay is clicked")
+            print("Saving current MIDI and JACK connections over existing patchbay")
             subprocess.call(["aj-snapshot", "-f", self.saveFile],
                              stdout=subprocess.PIPE,
                              preexec_fn=os.setsid)
-            print "Attempting to restart the thingy"
+            print("Attempting to restart the thingy")
             os.kill(self.pid, signal.SIGHUP)
-            print "OK, see if it got restarted."
+            print("OK, see if it got restarted.")
                             # Replace this with a proper python sendsignal thing
                             #subprocess.call(["kill", "-HUP", self.pid],
                             #=               stdout=subprocess.PIPE,
