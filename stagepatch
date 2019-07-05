@@ -129,7 +129,7 @@ class StagePatch(liblo.Server):
                 print('gui already shown')
 
         if not self.app:
-            self.app = subprocess.Popen([os.path.join(self.executable_dir, 'stagepatch-gui-rofi.py'),
+            self.app = subprocess.Popen([os.path.join(self.executable_dir, 'stagepatch-gui.sh'),
                                          self.saveFile,
                                          repr(self.pid)],
                                         stdout=subprocess.PIPE,
