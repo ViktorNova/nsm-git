@@ -22,26 +22,26 @@ Cancel" \
 
 if [ "$RESPONSE" = "Save JACK and ALSA connections" ];
     then
-        aj-snapshot -f "$SAVEFILE"
+        RESULT=$(aj-snapshot -f "$SAVEFILE")
         kill -HUP $PID
 elif [ "$RESPONSE" = "Save JACK connections only" ];
     then
-        aj-snapshot -j -f "$SAVEFILE"
+        RESULT=$(aj-snapshot -j -f "$SAVEFILE")
         kill -HUP $PID
 elif [ "$RESPONSE" = "Save ALSA connections only" ];
     then
-        aj-snapshot -a -f "$SAVEFILE"
+        RESULT=$(aj-snapshot -a -f "$SAVEFILE")
         kill -HUP $PID
 elif [ "$RESPONSE" = "Revert to saved patchbay" ];
     then
-        aj-snapshot -x
+        RESULT=$(aj-snapshot -x)
         kill -HUP $PID
 elif [ "$RESPONSE" = "Disconnect all" ];
     then
-        aj-snapshot -x
+        RESULT=$(aj-snapshot -x)
 else
     echo "Cancelled"
     exit 1
 fi
 
-notify-send "$RESPONSE" "DONE!"
+notify-send "Stagepatch" "$RESULT"
